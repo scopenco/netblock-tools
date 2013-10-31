@@ -27,6 +27,11 @@ Installing
 ----------
 Checkout scripts and run -h.
 
+Running examples
+----------
+1. ./netblock.py CH | bash
+2. tail -f /var/log/httpd/access_log | ipblock.py /etc/ipblock.config -f -
+
 Questions?
 ----------
 
