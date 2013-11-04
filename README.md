@@ -20,6 +20,7 @@ Contents
 --------
 
 - **netblock.py**           - Create rules for Iptables that block or allow networks by country code from GeoIP database.
+- **netnull.py**            - Create rules for ip route that block or allow networks by country code from GeoIP database.
 - **ipblock.py**            - Add blocking rules to Iptables on the base of any access logs (http, ftp, etc.)
 - **ipblock.config**        - Config file for ipblock
 
