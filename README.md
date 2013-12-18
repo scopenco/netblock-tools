@@ -3,6 +3,8 @@ netblock tools
 
 Documentation
 --------
+Russian description at http://blog.scopenco.net/soft-ddos-protection/
+
 For installation instructions and information on the design overview
 of the netblock-tools scripts, please read the documentation that is found here
 and on wiki.
