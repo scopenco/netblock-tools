@@ -3,7 +3,8 @@
 # Author: Andrey Skopenko <andrey@scopenco.net>
 '''%prog [OPTIONS] <RULES_CONFIG>
 
-Anti DDOS tool used to block ip addresses in firewall based on access list of web server.
+Anti DDOS tool used to block ip addresses
+in firewall based on access list of web server.
 
 Examples
 $ python bin/ipblock.py etc/config -f access_log -d
@@ -19,12 +20,13 @@ import logging
 import logging.handlers
 import IPy
 import subprocess
-
 from optparse import OptionParser, make_option
+
 
 def read_config(path):
 
     drop_rules = []
+
     def drop(pattern, mask):
         drop_rules.append((pattern, mask))
 
@@ -42,29 +44,31 @@ def read_config(path):
     return data
 #end def read_config
 
+
 def open_anything(source):
     if source == "-":
         return sys.stdin
 
-    try:                                  
+    try:
         return open(source)
     except (OSError, IOError), e:
         logging.critical(e)
         sys.exit(1)
 #end def open_anything
 
+
 def setup_logging(appname, debug=False):
     """ set up logging """
 
     log_dir = os.path.expanduser("~/.%s" % appname)
-    if not os.access(log_dir,os.W_OK):
+    if not os.access(log_dir, os.W_OK):
         try:
             os.makedirs(log_dir)
         except IOError, e:
-            raise RuntimeError, "Could not create %d directory: " % log_dir, e
+            raise RuntimeError("Could not create %d directory: " % log_dir), e
 
-    format='%(asctime)s: %(message)s'
-    fileformat='%(asctime)s ipblock: %(message)s'
+    format = '%(asctime)s: %(message)s'
+    fileformat = '%(asctime)s ipblock: %(message)s'
     filename = os.path.join(log_dir, appname + ".log")
 
     # common logging options
@@ -73,7 +77,8 @@ def setup_logging(appname, debug=False):
 
     # file logging
     fileHandler = logging.handlers.RotatingFileHandler(filename,
-                                    "a", maxBytes=1024*1024, backupCount=5)
+                                                       "a", maxBytes=1024*1024,
+                                                       backupCount=5)
     fileHandler.setFormatter(logging.Formatter(fileformat))
     rootLogger.addHandler(fileHandler)
 
@@ -85,10 +90,13 @@ def setup_logging(appname, debug=False):
     rootLogger.addHandler(streamHandler)
 #end def setup_logging
 
+
 def main():
     option_list = [
-        make_option('-f', '--file', dest='file', help='data file or pipe (-)'),
-        make_option('-s', '--show', dest='show', action='count', help='Show only'),
+        make_option('-f', '--file', dest='file',
+                    help='data file or pipe (-)'),
+        make_option('-s', '--show', dest='show',
+                    action='count', help='Show only'),
         make_option('-d', '--debug', dest='debug', action='count',
                     help='verbose output (use twice for extra debug)'),
     ]
@@ -108,14 +116,14 @@ def main():
     # Config file overrides defaults
     config.update(read_config(config_file))
     # Options override config
-    config.update(dict([ (k, v) for k, v in vars(options).items()
-                         if v is not None ]))
+    config.update(dict([(k, v) for k, v in vars(options).items()
+                       if v is not None]))
 
     # set logging
     debug = config.get('debug')
     setup_logging("ipblock", debug)
 
-    # start 
+    # start
     logging.info('run blocking')
     logging.debug('config: %r', config)
     logging.debug('options: %r', vars(options))
@@ -132,13 +140,13 @@ def main():
     for drop_rule, mask in drop_rules:
         # create regext cache
         logging.debug('compile drop rule: %r', drop_rule)
-        regs.append((re.compile(drop_rule),mask))
+        regs.append((re.compile(drop_rule), mask))
 
     # compile pattern from config
     ip = re.compile(config.get('pattern'))
 
-    show_only = config.get('show');
-    block_command = config.get('command');
+    show_only = config.get('show')
+    block_command = config.get('command')
 
     nets = []
     for line in f:
@@ -151,9 +159,9 @@ def main():
                     if show_only:
                         print block_command % block_net
                     else:
-                        logging.info('blocking %s' % block_net);
+                        logging.info('blocking %s' % block_net)
                         subprocess.Popen(block_command % block_net, shell=True,
-                            stdout=subprocess.PIPE)
+                                         stdout=subprocess.PIPE)
                 break
 
 if __name__ == '__main__':
